@@ -33,10 +33,11 @@ class AudioInput {
   }
 }
 
+typedef VoidListener = void Function();
+
 class FlutterAudioManager {
-  static const MethodChannel _channel =
-      const MethodChannel('flutter_audio_manager');
-  static void Function() _onInputChanged;
+  static const MethodChannel _channel = const MethodChannel('flutter_audio_manager');
+  static VoidListener? _onInputChanged;
 
   static Future<String> get platformVersion async {
     final String version = await _channel.invokeMethod('getPlatformVersion');
@@ -49,8 +50,7 @@ class FlutterAudioManager {
   }
 
   static Future<List<AudioInput>> getAvailableInputs() async {
-    final List<dynamic> list =
-        await _channel.invokeMethod('getAvailableInputs');
+    final List<dynamic> list = await _channel.invokeMethod('getAvailableInputs');
 
     List<AudioInput> arr = [];
     list.forEach((data) {
@@ -75,7 +75,7 @@ class FlutterAudioManager {
     return await _channel.invokeMethod('changeToBluetooth');
   }
 
-  static void setListener(void Function() onInputChanged) {
+  static void setListener(VoidListener onInputChanged) {
     FlutterAudioManager._onInputChanged = onInputChanged;
     _channel.setMethodCallHandler(_methodHandle);
   }
@@ -84,7 +84,8 @@ class FlutterAudioManager {
     if (_onInputChanged == null) return;
     switch (call.method) {
       case "inputChanged":
-        return _onInputChanged();
+        _onInputChanged?.call();
+        break;
       default:
         break;
     }

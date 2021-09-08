@@ -1,3 +1,6 @@
+## 0.2.4
+
+-   Migration to Null-safty.s
 ## 0.2.3
 
 -   Support to get the current output audio device
